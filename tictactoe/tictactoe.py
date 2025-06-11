@@ -74,26 +74,50 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    
-    raise NotImplementedError
+    # checando as linhas
+    for line in board:
+        if line[0] != EMPTY and line[0] == line[1] == line[2]:
+            return line[0]
+    # checando colunas
+    for column in range(3):
+        if board[0][column] != EMPTY and board[0][column] == board[1][column] == board[2][column]:
+            return board[0][column]
+    # checando diagonais
+    if board[0][0] != EMPTY and board[0][0] == board[1][1] == board[2][2]:
+        return board[0][0]
+    if board[0][2] != EMPTY and board[0][2] == board[1][1] == board[2][0]:
+        return board[0][2]
+    return None
+    #raise NotImplementedError
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    if winner(board) != None:
+        return True
+    elif EMPTY not in board:
+        return True
+    else: return False
+    #raise NotImplementedError
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    if terminal(board):
+        if winner(board) == "X": return 1
+        elif winner(board) == "O": return -1
+        else: return 0
+    raise ValueError("Tabuleiro não está no estado terminal.")
+   #raise NotImplementedError
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    
+    #raise NotImplementedError
