@@ -1,3 +1,23 @@
+"""
+Tic Tac Toe Player
+"""
+
+import math
+
+X = "X"
+O = "O"
+EMPTY = None
+
+
+def initial_state():
+    """
+    Returns starting state of the board.
+    """
+    return [[EMPTY, EMPTY, EMPTY],
+            [EMPTY, EMPTY, EMPTY],
+            [EMPTY, EMPTY, EMPTY]]
+
+
 def player(board):
     """
     Returns player who has the next turn on a board.
@@ -16,34 +36,9 @@ def player(board):
         return "O"
     else:
         return "X"
+  #raise NotImplementedError
 
 
-    
-EMPTY = None
-    
-board1 = [[EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]
-
-board2 = [[EMPTY, EMPTY, EMPTY],
-            [EMPTY,  "X", EMPTY],
-            [EMPTY, "O", EMPTY]]
-
-board3 = [["X", "O", EMPTY],
-            ["X",  "O", EMPTY],
-            ["X", EMPTY, "O"]]
-board4 = [["X", "X", EMPTY],
-            ["O",  "O", "O"],
-            ["X", EMPTY, "X"]]
-board5 = [["X", "X", "O"],
-            ["O",  "O", "X"],
-            ["X", "X", "O"]]
-
-#print(player(board1))
-#print(player(board2))
-#print(player(board3))
-
-# actions
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
@@ -55,31 +50,25 @@ def actions(board):
             if cell == EMPTY:
                 possible_plays.add((i, j))
     
-    return possible_plays
-                
-#print(actions(board1))
-#print(actions(board2))
-#print(actions(board3))
+    return possible_plays            
+    
+    #raise NotImplementedError
 
-# result
+
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    new_board = board
     possible_plays = actions(board)
     if action not in possible_plays:
         raise ValueError("Jogada Inválida")
 
     i, j = action
+    new_board = board
     new_board[i][j] = player(board)
     return new_board
+    #raise NotImplementedError
 
-#print(result(board1, (0,0)))
-#print(result(board2, (1,0)))
-#print(result(board3, (1,2)))
-
-# winner
 
 def winner(board):
     """
@@ -90,24 +79,17 @@ def winner(board):
         if line[0] != EMPTY and line[0] == line[1] == line[2]:
             return line[0]
     # checando colunas
-    for column in range(3):
-        if board[0][column] != EMPTY and board[0][column] == board[1][column] == board[2][column]:
-            return board[0][column]
+    for col in range(3):
+        if board[0][col] != EMPTY and board[0][col] == board[1][col] == board[2][col]:
+            return board[0][col]
     # checando diagonais
     if board[0][0] != EMPTY and board[0][0] == board[1][1] == board[2][2]:
         return board[0][0]
     if board[0][2] != EMPTY and board[0][2] == board[1][1] == board[2][0]:
         return board[0][2]
     return None
+    #raise NotImplementedError
 
-print("winner ----")
-print(winner(board1))
-print(winner(board2))
-print(winner(board3))
-print(winner(board4))
-print(winner(board5))
-
-# terminal
 
 def terminal(board):
     """
@@ -115,17 +97,12 @@ def terminal(board):
     """
     if winner(board) != None:
         return True
-    elif any(EMPTY in row for row in board):
-        return False
-    else: return True
+    for row in board:
+        if EMPTY in row:
+            return False
+    return True
+    #raise NotImplementedError
 
-#print(terminal(board1))
-#print(terminal(board2))
-#print(terminal(board3))
-#print(terminal(board4))
-#print(terminal(board5))
-
-# utility
 
 def utility(board):
     """
@@ -136,9 +113,90 @@ def utility(board):
         elif winner(board) == "O": return -1
         else: return 0
     raise ValueError("Tabuleiro não está no estado terminal.")
+   #raise NotImplementedError
 
-#print(utility(board1))
-#print(utility(board2))
-#print(utility(board3))
-#print(utility(board4))
-#print(utility(board5))
+
+def minimax(board):
+    """
+    Returns the optimal action for the current player on the board.
+    """
+    player_atual = player(board)
+    if terminal(board):
+        return None
+    
+    if player_atual == "X":
+        melhor_valor = -9999
+        melhor_jogada = None
+        for jogada in actions(board):
+            novo_estado = result(board, jogada)
+            valor = minvalue(novo_estado)
+            if valor > melhor_valor:
+                melhor_valor = valor
+                melhor_jogada = jogada
+        return melhor_jogada
+    
+    else:
+        melhor_valor = 9999
+        melhor_jogada = None
+        for jogada in actions(board):
+            novo_estado = result(board, jogada)
+            valor = maxvalue(novo_estado)
+            if valor < melhor_valor:
+                melhor_valor = valor
+                melhor_jogada = jogada
+        return melhor_jogada
+    #raise NotImplementedError
+
+def maxvalue(state): 
+    if (terminal(state)):
+      return utility(state)
+    v = -9999
+    for action in actions(state):
+        v = max(v, minvalue(result(state,action)))
+    return v
+
+def minvalue(state):
+    if terminal(state):
+        return utility(state)
+    v = 9999
+    for action in actions(state):
+        v = min(v, maxvalue(result(state, action)))
+    return v
+# CHECAR PÁGINA 288 DO SLIDE! Lá existe uma aplicação da função MINMAX
+
+tabuleiro = [
+    ["X", "O", None],
+    ["O", "X", None],
+    [None, None, None]
+]
+
+
+tabuleiro2 = [
+    ["X", None, None],
+    [None, "O", None],
+    ["X", None, None]
+]
+
+tabuleiro3 = [
+    ["X", "O", "X"],
+    ["X", "O", "O"],
+    ["O", "O", "X"]
+]
+
+tabuleiro4 = [
+    [EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY]
+]
+
+#print(minimax(tabuleiro))
+#print(minimax(tabuleiro2))    
+#print(winner(tabuleiro))
+#print(terminal(tabuleiro))
+#print(winner(tabuleiro2))
+#print(terminal(tabuleiro2))
+#print(winner(tabuleiro3))
+#print(terminal(tabuleiro3))
+
+print(winner(initial_state()))
+print(terminal(initial_state()))

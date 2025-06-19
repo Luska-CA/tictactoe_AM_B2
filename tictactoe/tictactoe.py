@@ -19,23 +19,9 @@ def initial_state():
 
 
 def player(board):
-    """
-    Returns player who has the next turn on a board.
-    """
-    num_X = 0
-    num_O = 0
-    
-    for line in board:
-        for cell in line:
-            if cell == "X":
-                num_X+= 1
-            elif cell == "O":
-                num_O+= 1
-    
-    if num_X > num_O: 
-        return "O"
-    else:
-        return "X"
+    num_X = sum(row.count(X) for row in board)
+    num_O = sum(row.count(O) for row in board)
+    return X if num_X == num_O else O
   #raise NotImplementedError
 
 
@@ -64,7 +50,7 @@ def result(board, action):
         raise ValueError("Jogada Inválida")
 
     i, j = action
-    new_board = board
+    new_board = [row[:] for row in board]
     new_board[i][j] = player(board)
     return new_board
     #raise NotImplementedError
@@ -79,9 +65,9 @@ def winner(board):
         if line[0] != EMPTY and line[0] == line[1] == line[2]:
             return line[0]
     # checando colunas
-    for column in range(3):
-        if board[0][column] != EMPTY and board[0][column] == board[1][column] == board[2][column]:
-            return board[0][column]
+    for col in range(3):
+        if board[0][col] != EMPTY and board[0][col] == board[1][col] == board[2][col]:
+            return board[0][col]
     # checando diagonais
     if board[0][0] != EMPTY and board[0][0] == board[1][1] == board[2][2]:
         return board[0][0]
@@ -97,9 +83,10 @@ def terminal(board):
     """
     if winner(board) != None:
         return True
-    elif EMPTY not in board:
-        return True
-    else: return False
+    for row in board:
+        if EMPTY in row:
+            return False
+    return True
     #raise NotImplementedError
 
 
