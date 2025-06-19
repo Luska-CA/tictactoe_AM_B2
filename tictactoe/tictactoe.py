@@ -119,5 +119,46 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    player_atual = player(board)
+    if terminal(board):
+        return None
     
+    if player_atual == "X":
+        melhor_valor = -9999
+        melhor_jogada = None
+        for jogada in actions(board):
+            novo_estado = result(board, jogada)
+            valor = minvalue(novo_estado)
+            if valor > melhor_valor:
+                melhor_valor = valor
+                melhor_jogada = jogada
+        return melhor_jogada
+    
+    else:
+        melhor_valor = 9999
+        melhor_jogada = None
+        for jogada in actions(board):
+            novo_estado = result(board, jogada)
+            valor = maxvalue(novo_estado)
+            if valor < melhor_valor:
+                melhor_valor = valor
+                melhor_jogada = jogada
+        return melhor_jogada
     #raise NotImplementedError
+
+def maxvalue(state): 
+    if (terminal(state)):
+      return utility(state)
+    v = -9999
+    for action in actions(state):
+        v = max(v, minvalue(result(state,action)))
+    return v
+
+def minvalue(state):
+    if terminal(state):
+        return utility(state)
+    v = 9999
+    for action in actions(state):
+        v = min(v, maxvalue(result(state, action)))
+    return v
+# CHECAR PÁGINA 288 DO SLIDE! Lá existe uma aplicação da função MINMAX
